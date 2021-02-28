@@ -62,7 +62,9 @@ auto peek_node(std::string &content, std::shared_ptr<xml_node> parent) -> std::s
 }
 
 auto xml_parse(std::string content) -> std::shared_ptr<xml_node> {
+    /* remove any white spaces from xml string */
     content = std::regex_replace(content, std::regex { "[\\s\\r\\n]*(<\\/?(\\w+)([^\\/>]+)\\/?>)[\\s\\r\\n]*" }, "$01");
+    
     return peek_node(content, {});
 }
 
