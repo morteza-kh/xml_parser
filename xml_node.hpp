@@ -9,8 +9,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <regex>
 
+#include <boost/regex.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -35,9 +35,9 @@ auto get_attributes(std::string const &str) -> std::map<std::string, std::string
 }
 
 auto peek_node(std::string &content, std::shared_ptr<xml_node> parent) -> std::shared_ptr<xml_node> { //
-    auto match = std::smatch {};
+    auto match = boost::smatch {};
 
-    if (std::regex_match(content, match, std::regex { "(<(\\w+)([^\\/>]*)\\/?>).*" })) {
+    if (boost::regex_match(content, match, boost::regex { "(<(\\w+)([^\\/>]*)\\/?>).*" })) {
         auto name  = match[2].str();
         auto attrs = get_attributes(match[3].str());
         auto elem  = std::shared_ptr<xml_node> { new xml_node { parent, name, attrs, {} } };
@@ -50,7 +50,7 @@ auto peek_node(std::string &content, std::shared_ptr<xml_node> parent) -> std::s
             while ((child = peek_node(content, elem)).get() != nullptr) {
                 elem->children.push_back(child);
             }
-            if (!std::regex_match(content, match, std::regex { (boost::format("(<\\/%1%>).*") % name).str() })) {
+            if (!boost::regex_match(content, match, boost::regex { (boost::format("(<\\/%1%>).*") % name).str() })) {
                 throw std::runtime_error { "exception on: " + content };
             } else {
                 content = content.substr(match[1].length());
@@ -63,7 +63,7 @@ auto peek_node(std::string &content, std::shared_ptr<xml_node> parent) -> std::s
 
 auto xml_parse(std::string content) -> std::shared_ptr<xml_node> {
     /* remove any white spaces from xml string */
-    content = std::regex_replace(content, std::regex { "[\\s\\r\\n]*(<\\/?(\\w+)([^\\/>]+)\\/?>)[\\s\\r\\n]*" }, "$01");
+    content = boost::regex_replace(content, boost::regex { "[\\s\\r\\n]*(<\\/?(\\w+)([^\\/>]+)\\/?>)[\\s\\r\\n]*" }, "$01");
     
     return peek_node(content, {});
 }
