@@ -66,12 +66,4 @@ auto xml_parse(std::string content) -> std::shared_ptr<xml_node> {
     return peek_node(content, {});
 }
 
-
-namespace xml {
-	auto parse(std::string const &string) -> std::shared_ptr<xml_node> 
-	{
-		return xml_parser(string);
-	}
-}
-
 #endif /* !IFF5C4E15_1DD8_4D3D_9B3B_10A5F4B0BD0D */
